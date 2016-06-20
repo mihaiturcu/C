@@ -80,6 +80,7 @@ bindSocketinNewProc(int port)
 int 
 main()
 {
+	// This will actually launch 50 sockets on different ports
 	for(int i=8000;i<=8050;i++)
 	{
 		bindSocketinNewProc(i);
