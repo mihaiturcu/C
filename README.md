@@ -1,2 +1,0 @@
-# C
-starting with git :)
