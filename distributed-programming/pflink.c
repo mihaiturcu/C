@@ -9,8 +9,6 @@
  * 
  * Version:  1.0 Created:  06/19/16 23:50:57 Revision:  none Compiler:  gcc
  * 
- * Author:  YOUR NAME (), Organization:
- * 
  * =====================================
  * ===============================================
  */
@@ -23,8 +21,11 @@
 #include <arpa/inet.h>
 #include "pflink.h"
 #define MAX_SIZE 80
+int Deliver(int port){
+
+}
 int 
-bindSocketinNewProc(int port)
+BindSocketInNewProc(int port)
 {
 	int		sockfd    , newsockfd, clilen;
 	struct sockaddr_in cli_addr, serv_addr;
