@@ -52,15 +52,16 @@ int SendTo(int port){
 	memset(&serv_addr, '0', sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_port = htons(port);
+	logToSomeFile("Just testing this if it works",2);
 	//hardcoded to send to localhost could add this to params at some later time
 	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
     {
-        printf("\nClient inet_pton error occured\n");
+        logToSomeFile("Client inet_pton error occured",3);
         return 1;
     }
 	if( connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
-       printf("\nClient Error : Connect Failed \n");
+       logToSomeFile("Client Error : Connect Failed",3);
        return 1;
     } 
 
