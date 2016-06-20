@@ -22,10 +22,18 @@
 #include "pflink.h"
 #define MAX_SIZE 80
 // note to self: don't send structs, requires serialization == bad stuff
+int StartsWith(const char *a, const char *b)
+{
+	//if(StartsWith("http://stackoverflow.com", "http://")) just sampling
+   if(strncmp(a, b, strlen(b)) == 0) return 1;
+   return 0;
+}
 void logToSomeFile(char buffer[200],int fileChoice){
 	char ToLog[] = ">> log";
 	char ToDebug[] = ">> debug";
 	char ToError[] = ">> error";
+	char ToOpenPorts[] = ">> availablePorts";
+		// logging every used port so i know who to broadcast to :)
 	char newbuff[220];
 	strcat(newbuff,buffer);
 	if(fileChoice==1){
@@ -37,10 +45,13 @@ void logToSomeFile(char buffer[200],int fileChoice){
 	else if(fileChoice==3){
 		strcat(newbuff,ToError);
 	}
+	else if(fileChoice==4){
+		strcat(newbuff,ToOpenPorts);
+	}
 	int ignoringThis=system(newbuff);
 }
 
-int SendTo(int port){
+int SendTo(char message[200], int port){
 	// magically sends a message to another process :), helps with the broadcast method
 	struct sockaddr_in serv_addr;
 	int sockfd = 0;
@@ -63,7 +74,7 @@ int SendTo(int port){
     {
        logToSomeFile("Client Error : Connect Failed",3);
        return 1;
-    } 
+    }
 
 
 }
@@ -74,6 +85,7 @@ int BindSocketInNewProc(int port)
 	char		string    [MAX_SIZE];
 	int		len;
 	char buffer[200];
+	logToSomeFile((char*)port,4);
 	//will log to file, someday
 	pid_t pid = fork();
 	if (pid == -1) {
@@ -113,6 +125,7 @@ int BindSocketInNewProc(int port)
 			len = read(newsockfd,string, MAX_SIZE);
 			/* make sure it's a proper string */
 			string[len] = 0;
+			if(StarsWith(&string,""))
 			//printf("%s\n", &string);
 			// elaborate logging technique below -->
 			snprintf(buffer, sizeof(buffer), "echo \"Process with almost unique identifier:[%lu] recieved this: %s\"",&uid,&string);
