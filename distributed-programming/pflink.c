@@ -22,7 +22,6 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include "pflink.h"
-#define SERV_TCP_PORT 8000	/* server's port number */
 #define MAX_SIZE 80
 int 
 bindSocketinNewProc(int port)
