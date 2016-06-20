@@ -21,8 +21,12 @@
 #include <arpa/inet.h>
 #include "pflink.h"
 #define MAX_SIZE 80
-int Deliver(int port){
-
+struct Message {
+	int id;
+	char text[50];
+};
+int SendTo(int port){
+	
 }
 int 
 BindSocketInNewProc(int port)
@@ -31,6 +35,8 @@ BindSocketInNewProc(int port)
 	struct sockaddr_in cli_addr, serv_addr;
 	char		string    [MAX_SIZE];
 	int		len;
+	struct Message messages[50];
+
 	pid_t		pid = fork();
 	if (pid == -1) {
 		printf("Fork fail");
