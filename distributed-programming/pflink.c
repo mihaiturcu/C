@@ -22,11 +22,51 @@
 #include "pflink.h"
 #define MAX_SIZE 80
 // note to self: don't send structs, requires serialization == bad stuff
+void logToSomeFile(char buffer[200],int fileChoice){
+	char ToLog[] = ">> log";
+	char ToDebug[] = ">> debug";
+	char ToError[] = ">> error";
+	char newbuff[220];
+	strcat(newbuff,buffer);
+	if(fileChoice==1){
+		strcat(newbuff,ToLog);
+	}
+	else if(fileChoice==2){
+		strcat(newbuff,ToDebug);
+	}
+	else if(fileChoice==3){
+		strcat(newbuff,ToError);
+	}
+	int ignoringThis=system(newbuff);
+}
+
 int SendTo(int port){
 	// magically sends a message to another process :), helps with the broadcast method
+	struct sockaddr_in serv_addr;
+	int sockfd = 0;
+	int clientsockfd = socket(AF_INET, SOCK_STREAM, 0);
+  	if (sockfd < 0) {
+      perror("Client: ERROR opening socket");
+      exit(1);
+	   }
+	memset(&serv_addr, '0', sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(port);
+	//hardcoded to send to localhost could add this to params at some later time
+	if(inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr)<=0)
+    {
+        printf("\nClient inet_pton error occured\n");
+        return 1;
+    }
+	if( connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+    {
+       printf("\nClient Error : Connect Failed \n");
+       return 1;
+    } 
+
+
 }
-int 
-BindSocketInNewProc(int port)
+int BindSocketInNewProc(int port)
 {
 	int		sockfd    , newsockfd, clilen;
 	struct sockaddr_in cli_addr, serv_addr;
@@ -57,6 +97,7 @@ BindSocketInNewProc(int port)
 		}
 		/* listen to the socket */
 		listen(sockfd, 5);
+		unsigned long uid = fprintf(stdout, "%lu\n", (unsigned long)time(NULL));
 		for (;;) {
 			/*
 			 * wait for a connection from a client; this is an
@@ -73,9 +114,9 @@ BindSocketInNewProc(int port)
 			string[len] = 0;
 			//printf("%s\n", &string);
 			// elaborate logging technique below -->
-			unsigned long uid = fprintf(stdout, "%lu\n", (unsigned long)time(NULL));
-			snprintf(buffer, sizeof(buffer), "echo \"Process with almost unique identifier:[%lu] recieved this: %s\" >> log",&uid,&string);
-			int writeToFile=system(buffer);
+			snprintf(buffer, sizeof(buffer), "echo \"Process with almost unique identifier:[%lu] recieved this: %s\"",&uid,&string);
+			logToSomeFile(buffer,1);
+			//int writeToFile=system(buffer);
 			close(newsockfd);
 		}
 
