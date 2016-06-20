@@ -21,10 +21,7 @@
 #include <arpa/inet.h>
 #include "pflink.h"
 #define MAX_SIZE 80
-struct Message {
-	int id;
-	char text[50];
-};
+// note to self: don't send structs, requires serialization == bad stuff
 int SendTo(int port){
 	
 }
@@ -35,8 +32,8 @@ BindSocketInNewProc(int port)
 	struct sockaddr_in cli_addr, serv_addr;
 	char		string    [MAX_SIZE];
 	int		len;
-	struct Message messages[50];
-
+	FILE* f=fopen("logs","a+");
+	//will log to file, someday
 	pid_t		pid = fork();
 	if (pid == -1) {
 		printf("Fork fail");
@@ -71,7 +68,7 @@ BindSocketInNewProc(int port)
 				perror("can't bind local address");
 			}
 			/* read a message from the client */
-			len = read(newsockfd, string, MAX_SIZE);
+			len = read(newsockfd,string, MAX_SIZE);
 			/* make sure it's a proper string */
 			string[len] = 0;
 			printf("%s\n", string);

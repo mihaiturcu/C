@@ -25,8 +25,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <arpa/inet.h> 
-
-int Send(int port)
+int Send(int port,char* ip[])
 {
     int sockfd = 0, n = 0;
     char recvBuff[1024];
@@ -42,9 +41,9 @@ int Send(int port)
     memset(&serv_addr, '0', sizeof(serv_addr)); 
 
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(atoi(port)); 
+    serv_addr.sin_port = htons(port); 
 
-    if(inet_pton(AF_INET, port, &serv_addr.sin_addr)<=0)
+    if(inet_pton(AF_INET, ip, &serv_addr.sin_addr)<=0)
     {
         printf("\n inet_pton error occured\n");
         return 1;
@@ -72,4 +71,6 @@ int Send(int port)
 
     return 0;
 }
-int main()
+int main(){
+	Send(8080,"127.0.0.1");
+}
