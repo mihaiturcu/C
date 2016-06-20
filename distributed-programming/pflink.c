@@ -23,7 +23,7 @@
 #define MAX_SIZE 80
 // note to self: don't send structs, requires serialization == bad stuff
 int SendTo(int port){
-	
+	// magically sends a message to another process :), helps with the broadcast method
 }
 int 
 BindSocketInNewProc(int port)
@@ -33,9 +33,8 @@ BindSocketInNewProc(int port)
 	char		string    [MAX_SIZE];
 	int		len;
 	char buffer[200];
-	//FILE* f=fopen("logs","a+");
 	//will log to file, someday
-	pid_t		pid = fork();
+	pid_t pid = fork();
 	if (pid == -1) {
 		printf("Fork fail");
 		exit(2);
@@ -72,8 +71,10 @@ BindSocketInNewProc(int port)
 			len = read(newsockfd,string, MAX_SIZE);
 			/* make sure it's a proper string */
 			string[len] = 0;
-			printf("%s\n", string);
-			snprintf(buffer, sizeof(buffer), "echo \"%s\" >> log",&string);
+			//printf("%s\n", &string);
+			// elaborate logging technique below -->
+			unsigned long uid = fprintf(stdout, "%lu\n", (unsigned long)time(NULL));
+			snprintf(buffer, sizeof(buffer), "echo \"Process with almost unique identifier:[%lu] recieved this: %s\" >> log",&uid,&string);
 			int writeToFile=system(buffer);
 			close(newsockfd);
 		}
