@@ -32,7 +32,8 @@ BindSocketInNewProc(int port)
 	struct sockaddr_in cli_addr, serv_addr;
 	char		string    [MAX_SIZE];
 	int		len;
-	FILE* f=fopen("logs","a+");
+	char buffer[200];
+	//FILE* f=fopen("logs","a+");
 	//will log to file, someday
 	pid_t		pid = fork();
 	if (pid == -1) {
@@ -72,6 +73,8 @@ BindSocketInNewProc(int port)
 			/* make sure it's a proper string */
 			string[len] = 0;
 			printf("%s\n", string);
+			snprintf(buffer, sizeof(buffer), "echo \"%s\" >> log",&string);
+			int writeToFile=system(buffer);
 			close(newsockfd);
 		}
 
