@@ -10,14 +10,12 @@
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  YOUR NAME (), 
- *   Organization:  
  *
  * =====================================================================================
  */
 #include "pflink.h"
-int main(){
-	// this will launch a socket and bind it to port 5050
-	bindSocketinNewProc(5050);
+int main(int argc, char* argv[]){
+	// this will launch a socket and bind it to port in first arg
+	BindSocketInNewProc(atoi(argv[1]));
 }
 
