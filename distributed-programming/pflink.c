@@ -22,20 +22,23 @@
 #include "pflink.h"
 #define MAX_SIZE 80
 // note to self: don't send structs, requires serialization == bad stuff
-int StartsWith(const char *a, const char *b)
+int StartsWith(const char *a,const char *b)
 {
 	//if(StartsWith("http://stackoverflow.com", "http://")) just sampling
    if(strncmp(a, b, strlen(b)) == 0) return 1;
    return 0;
 }
+
 void logToSomeFile(char buffer[200],int fileChoice){
 	char ToLog[] = ">> log";
 	char ToDebug[] = ">> debug";
 	char ToError[] = ">> error";
 	char ToOpenPorts[] = ">> availablePorts";
 		// logging every used port so i know who to broadcast to :)
-	char newbuff[220];
+	char newbuff[250];
+	memset(newbuff,0,250);
 	strcat(newbuff,buffer);
+	printf("First strcat: %s",&newbuff);
 	if(fileChoice==1){
 		strcat(newbuff,ToLog);
 	}
@@ -48,6 +51,7 @@ void logToSomeFile(char buffer[200],int fileChoice){
 	else if(fileChoice==4){
 		strcat(newbuff,ToOpenPorts);
 	}
+	printf("Before system: %s",&newbuff);
 	int ignoringThis=system(newbuff);
 }
 
@@ -84,8 +88,11 @@ int BindSocketInNewProc(int port)
 	struct sockaddr_in cli_addr, serv_addr;
 	char		string    [MAX_SIZE];
 	int		len;
-	char buffer[200];
-	logToSomeFile((char*)port,4);
+	char cleanbuffer[300];
+	memset(cleanbuffer,0,300);
+	//itoa(port,portToString,10);
+	//printf("return code: %d ",c);
+	//printf("%s -- stringy",&portToString);
 	//will log to file, someday
 	pid_t pid = fork();
 	if (pid == -1) {
@@ -110,12 +117,13 @@ int BindSocketInNewProc(int port)
 		}
 		/* listen to the socket */
 		listen(sockfd, 5);
-		unsigned long uid = fprintf(stdout, "%lu\n", (unsigned long)time(NULL));
+//		bzero((char *)&cleanbuffer, sizeof(cleanbuffer));
 		for (;;) {
 			/*
 			 * wait for a connection from a client; this is an
 			 * iterative server
 			 */
+
 			clilen = sizeof(cli_addr);
 			newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
 			if (newsockfd < 0) {
@@ -125,11 +133,17 @@ int BindSocketInNewProc(int port)
 			len = read(newsockfd,string, MAX_SIZE);
 			/* make sure it's a proper string */
 			string[len] = 0;
-			if(StarsWith(&string,""))
+//			printf("issue\n");
+//			printf("%s",&string);
+			//strcat(string,"");
+			if(StartsWith(string,"broadcast"))
+				logToSomeFile("Yep, got a message starting with broadcast",2);
 			//printf("%s\n", &string);
+			//
 			// elaborate logging technique below -->
-			snprintf(buffer, sizeof(buffer), "echo \"Process with almost unique identifier:[%lu] recieved this: %s\"",&uid,&string);
-			logToSomeFile(buffer,1);
+			snprintf(cleanbuffer, sizeof(cleanbuffer),"echo 'Process with almost unique identifier:[notImplementedYet] recieved this: %s'",&string);
+			printf("[%s]",&cleanbuffer);
+			logToSomeFile(cleanbuffer,1);
 			//int writeToFile=system(buffer);
 			close(newsockfd);
 		}
